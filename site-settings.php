@@ -4,6 +4,10 @@
   lt3 Site Settings
 
 ------------------------------------------------
+  site-settings.php
+  Sunday, 317th March 2013
+  Beau Charman | @beaucharman | http://beaucharman.me
+
 	Version: 1.0
 	Notes:
 
