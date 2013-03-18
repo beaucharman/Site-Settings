@@ -21,7 +21,7 @@
   Declare the settings array
 
 ------------------------------------------------
-All accept id & tpye
+All accept id & type
 ------------------------------------------------ */
 $lt3_site_settings_array = array(
   array(
