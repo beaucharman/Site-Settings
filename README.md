@@ -5,7 +5,6 @@
 ## Usage
 
 ```php
-
 /* Declare the Site Settings options
    ======================================================================== */
 $group     = 'lt3_site_settings';
@@ -35,13 +34,11 @@ if (!is_admin())
 {
   $lt3_site_settings = get_option($name);
 }
-
 ```
 
 Also, for the use of the file upload option, the following script is required - also alter the reference to it within the site-settings.php class ('path/to/script/cmfb-file-upload.js'):
 
 ```javascript
-
 /**
  * Custom Meta Field Boxes File Upload
  * ========================================================================
@@ -68,7 +65,6 @@ Also, for the use of the file upload option, the following script is required - 
     return false;
   });
 }(jQuery));
-
 ```
 
 #### Dependencies

@@ -4,7 +4,7 @@
  * ========================================================================
  * site-settings.php
  * @version 2.0 | June 2nd 2013
- * @author  Beau Charman | @beaucharman | http://beaucharman.me
+ * @author  Beau Charman | @beaucharman | http://www.beaucharman.me
  * @link    https://github.com/beaucharman/site-settings
  * @license MIT License
  *
