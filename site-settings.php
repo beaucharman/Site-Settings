@@ -33,12 +33,12 @@ class LT3_Site_Settings_Page
   * ======================================================================== */
   public function __construct($group, $name, $fields = array(), $menu_name = '', $title = '')
   {
-    $this->fields_group  = $this->uglify_words($group);
-    $this->fields_name   = $this->uglify_words($name);
-    $this->fields        = $fields;
-    $this->menu_name     = ($menu_name)
+    $this->fields_group = $this->uglify_words($group);
+    $this->fields_name = $this->uglify_words($name);
+    $this->fields = $fields;
+    $this->menu_name = ($menu_name)
       ? $menu_name : $this->prettify_words($this->fields_name);
-    $this->title         = ($title)
+    $this->title = ($title)
       ? $title : get_bloginfo('name') . ' ' . $this->prettify_words($this->fields_name);
     $this->site_settings = get_option($this->fields_name);
 
