@@ -25,37 +25,50 @@ class LT3_Site_Settings_Page
   public $title;
   public $site_settings;
 
+
   /**
    * Class Constructor
    * ========================================================================
    * __construct()
    * @param  {array} $_site_settings
-  * ======================================================================== */
+   */
   public function __construct($group, $name, $fields = array(), $menu_name = '', $title = '')
   {
-    $this->fields_group = $this->uglify_words($group);
-    $this->fields_name = $this->uglify_words($name);
-    $this->fields = $fields;
-    $this->menu_name = ($menu_name)
-      ? $menu_name : $this->prettify_words($this->fields_name);
-    $this->title = ($title)
-      ? $title : get_bloginfo('name') . ' ' . $this->prettify_words($this->fields_name);
+    /**
+     * Set class values
+     */
+    $this->fields_group  = $this->uglify_words($group);
+    $this->fields_name   = $this->uglify_words($name);
+    $this->fields        = $fields;
+    $this->menu_name     = $menu_name;
+    $this->title         = $title;
     $this->site_settings = get_option($this->fields_name);
+
+    if (! $this->menu_name)
+    {
+      $this->menu_name = $this->prettify_words($this->fields_name);
+    }
+
+    if (! $this->title)
+    {
+      $this->title = get_bloginfo('name') . ' ' . $this->prettify_words($this->fields_name);
+    }
 
     /**
      * Initialise the settings page and
      * set the $lt3_site_settings global variable.
-     * ======================================================================== */
+     */
     add_action('admin_init', array(&$this, 'site_settings_init'));
     add_action('admin_menu', array(&$this, 'site_settings_add_page'));
   }
+
 
   /**
    * Site Settings Init
    * ========================================================================
    * site_settings_init()
    * Register the LT3 site settings
-   * ======================================================================== */
+   */
   public function site_settings_init()
   {
     register_setting(
@@ -65,12 +78,13 @@ class LT3_Site_Settings_Page
    );
   }
 
+
   /**
    * Site Settings Add Page
    * ========================================================================
    * site_settings_add_page()
    * Hook the options page with the required settings
-   * ======================================================================== */
+   */
   public function site_settings_add_page()
   {
     add_theme_page(
@@ -82,16 +96,19 @@ class LT3_Site_Settings_Page
    );
   }
 
+
   /**
    * Site Settings Render Page
    * ========================================================================
    * site_settings_render_page()
    * Render the settings page
-   * ======================================================================== */
+   */
   function site_settings_render_page()
   {
-    /* Check that the user is allowed to update options */
-    if (!current_user_can('manage_options'))
+    /**
+     * Check that the user is allowed to update options
+     */
+    if (! current_user_can('manage_options'))
     {
       wp_die('You do not have sufficient permissions to access this page . ');
     }
@@ -100,30 +117,42 @@ class LT3_Site_Settings_Page
 
     if (isset($_GET['settings-updated']))
     {
-      echo '<div id="message" class="updated fade"><p>' . $this->title . ' Updated . </p></div>';
+      echo '<div id="message" class="updated fade"><p>' . $this->title . ' Updated. </p></div>';
     }
 
-    /* Show the page settings title */
+    /**
+     * Show the page settings title
+     */
     screen_icon('themes'); echo '<h2>' . $this->title  . '</h2>';
 
-    echo '<form method="post" action="options.php">';
-    echo '<table class="form-table lt3-form-container">';
+    echo '<form method="post" action="options.php">'
+      . '<table class="form-table lt3-form-container">';
 
-    /* Declare the settings field */
+    /**
+     * Declare the settings field
+     */
     settings_fields($this->fields_group);
 
     foreach ($this->fields as $field)
     {
-      /* Set the page's field name */
+      /**
+       * Set the page's field name
+       */
       $fields_name = $this->fields_name;
 
-      /* Get the id */
+      /**
+       * Get the id
+       */
       $id = (isset($field['id'])) ? $field['id'] : '';
 
-      /* Get the label for the current setting */
+      /**
+       * Get the label for the current setting
+       */
       $label = (isset($field['label'])) ? $field['label'] : $this->prettify_words($id);
 
-      /* Get the value for the current setting */
+      /**
+       * Get the value for the current setting
+       */
       $value = (isset($this->site_settings[$id])) ? $this->site_settings[$id ] : '';
 
       echo '<tr>';
@@ -134,16 +163,16 @@ class LT3_Site_Settings_Page
          * divider
          * ========================================================================
          * @param {string} $label
-         * ======================================================================== */
+         */
         echo '<td class="divider" colspan="2">' . $field['content'] . '</td>';
       }
       else
       {
 
-        echo '<th>';
-        echo '  <label for="' . $fields_name . '[' . $id . ']">' . $label . '</label>';
-        echo '</th>';
-        echo '<td>';
+        echo '<th>'
+          . '  <label for="' . $fields_name . '[' . $id . ']">' . $label . '</label>'
+          . '</th>'
+          . '<td>';
 
         switch ($field['type'])
         {
@@ -154,7 +183,7 @@ class LT3_Site_Settings_Page
            * @param {string} 'id'
            * @param {string} 'label'
            * @param {string} 'description'
-           * ======================================================================== */
+           */
           case 'text':
             echo '<input id="' . $fields_name . '[' . $id . ']" name="' . $fields_name
               . '[' . $id . ']" type="text"  placeholder="'
@@ -168,7 +197,7 @@ class LT3_Site_Settings_Page
            * @param {string} 'id'
            * @param {string} 'label'
            * @param {string} 'description'
-           * ======================================================================== */
+           */
           case 'textarea':
             echo '<textarea id="' . $fields_name . '[' . $id . ']" name="' . $fields_name
               . '[' . $id . ']" cols="52" rows="4">' . $value . '</textarea>';
@@ -180,7 +209,7 @@ class LT3_Site_Settings_Page
            * @param {string} 'id'
            * @param {string} 'label'
            * @param {string} 'description'
-           * ======================================================================== */
+           */
           case 'checkbox':
             echo '<input type="checkbox" value="' . $id . '" id="' . $fields_name
               . '[' . $id . ']" name="' . $fields_name . '[' . $id . ']"'
@@ -194,7 +223,7 @@ class LT3_Site_Settings_Page
            * @param {string} 'label'
            * @param {string} 'description'
            * @param {array}  'options'
-           * ======================================================================== */
+           */
           case 'select':
             echo '<select name="' . $fields_name . '[' . $id . ']" id="'
               . $fields_name . '[' . $id . ']">';
@@ -217,7 +246,7 @@ class LT3_Site_Settings_Page
            * @param {string || array} 'post_type'
            * @param {string}          'description'
            * @param {array}           'args'
-           * ======================================================================== */
+           */
           case 'post_select':
 
             $field['args'] = (isset($field['args'])) ? $field['args'] : array();
@@ -229,8 +258,8 @@ class LT3_Site_Settings_Page
             );
             $items = get_posts($args);
             echo '<select name="' . $fields_name . '[' . $id . ']" id="'
-              . $fields_name . '[' . $id . ']">';
-            echo '<option value="">Select&hellip;</option>';
+              . $fields_name . '[' . $id . ']">'
+              . '<option value="">Select&hellip;</option>';
             foreach ($items as $item)
             {
               $is_select = ($item->ID == $value) ? ' selected' : '';
@@ -241,36 +270,40 @@ class LT3_Site_Settings_Page
             echo '</select>';
             break;
 
-            /**
-             * file
-             * ========================================================================
-             * @param {string} type
-             * @param {string} id
-             * @param {string} label       | optional
-             * @param {string} description | optional
-             * @param {string} placeholder | optional
-             * ======================================================================== */
-            case 'file':
-              wp_enqueue_style('thickbox');
-              wp_enqueue_script('thickbox');
-              wp_enqueue_script('media-upload');
-              wp_enqueue_script('cmfb-file-upload', 'path/to/script/cmfb-file-upload.js'
-                , array('thickbox', 'media-upload'));
-              $field_placeholder = (isset($field['placeholder'])) ? $field['placeholder'] : '';
-              echo '<input name="' . $fields_name . '[' . $id . ']" type="text" placeholder="'
-                .$field_placeholder.'" class="custom_upload_file" value="'.$value.'" size="100" />
-                <input class="custom_upload_file_button button" type="button" value="Choose File" />
-                <br><small><a href="#" class="custom_clear_file_button">Remove File</a></small>';
-              break;
+          /**
+           * file
+           * ========================================================================
+           * @param {string} type
+           * @param {string} id
+           * @param {string} label       | optional
+           * @param {string} description | optional
+           * @param {string} placeholder | optional
+           */
+          case 'file':
+            wp_enqueue_style('thickbox');
+            wp_enqueue_script('thickbox');
+            wp_enqueue_script('media-upload');
+            wp_enqueue_script('cmfb-file-upload', LT3_FULL_SCRIPTS_PATH . '/admin/lt3-file-upload.js'
+              , array('thickbox', 'media-upload'));
+            $field_placeholder = (isset($field['placeholder'])) ? $field['placeholder'] : '';
+            echo '<input name="' . $fields_name . '[' . $id . ']" type="text" placeholder="'
+              . $field_placeholder.'" class="custom_upload_file" value="'.$value.'" size="100" />'
+              . '<input class="custom_upload_file_button button" type="button" value="Choose File" />'
+              . '<br><small><a href="#" class="custom_clear_file_button">Remove File</a></small>';
+            break;
 
-          /* default */
+          /**
+           * default
+           */
           default:
             echo '<span style="color: red;">Sorry, the type allocated for this input is not valid.</span>';
             break;
 
         } // end switch
 
-        /* Render the setting description if possible */
+        /**
+         * Render the setting description if possible
+         */
         if (isset($field['description']))
         {
           echo '<p><span class="description">' . $field['description'] . '</span></p>';
@@ -280,14 +313,15 @@ class LT3_Site_Settings_Page
       echo '</tr>';
     } // end foreach
 
-    echo '</table>';
-    echo '<p class="submit">';
-    echo '  <input type="submit" class="button-primary" value="Save Changes">';
-    echo '  <a href="./" class="button">Cancel</a>';
-    echo '</p>';
-    echo '</form>';
-    echo '</div>';
+    echo '</table>'
+      . '<p class="submit">'
+      . '  <input type="submit" class="button-primary" value="Save Changes">&nbsp;'
+      . '  <a href="./" class="button">Cancel</a>'
+      . '</p>'
+      . '</form>'
+      . '</div>';
   }
+
 
   /**
    * Site Settings Validate
@@ -297,10 +331,12 @@ class LT3_Site_Settings_Page
    * @return {array} $input
    *
    * Sanitize and validate input. Accepts an array, return a sanitized array.
-   * ======================================================================== */
+   */
   public function site_settings_validate($input)
   {
-    /* List the settings to be saved here: */
+    /**
+     * List the settings to be saved here:
+     */
     foreach ($this->fields as $field)
     {
       if (isset($field['id']) && $field['type'] != 'divider')
@@ -311,6 +347,7 @@ class LT3_Site_Settings_Page
     return $input;
   }
 
+
   /**
    * Prettify words
    * ========================================================================
@@ -320,11 +357,12 @@ class LT3_Site_Settings_Page
    *
    * Creates a pretty version of a string, like
    * a pug version of a dog.
-   * ======================================================================== */
+   */
   public function prettify_words($words)
   {
     return ucwords(str_replace('_', ' ', $words));
   }
+
 
   /**
    * Uglify words
@@ -334,9 +372,10 @@ class LT3_Site_Settings_Page
    * @return {string}
    *
    * creates a url firendly version of the given string .
-   * ======================================================================== */
+   */
   public function uglify_words($words)
   {
     return strToLower(str_replace(' ', '_', $words));
   }
+
 }
